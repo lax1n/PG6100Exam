@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+<ui:composition template="/layouts/layout.xhtml">
+    <ui:define name="head">
+        <title>Home</title>
+    </ui:define>
+    <ui:define name="content">
+        <h1>Event List Home Page</h1>
+        <hr />
+        <c:choose>
+            <c:when test="#{userController.isLoggedIn()}">
+                <h:button id="newEventBtn" value="Create Event" outcome="/event/newEvent.faces" />
+            </c:when>
+        </c:choose>
+        <h2>Future Events</h2>
+        <c:choose>
+            <c:when test="#{userController.isLoggedIn()}">
+                <h:form>
+                    <h:selectBooleanCheckbox id="countryFilter" value="#{eventController.countryFilter}" action="#{eventController.toggleCountryFilter()}"> Only #{userController.currentUser.country} <br />
+                        <f:ajax event="change" render="dynamic_events" />
+                    </h:selectBooleanCheckbox>
+                </h:form>
+            </c:when>
+        </c:choose>
+        <c:choose>
+            <c:when test="#{eventController.anyEvents()}">
+                <!-- Content for existing events -->
+                <c:choose>
+                    <c:when test="#{userController.isLoggedIn()}">
+                        <h:panelGrid id="dynamic_events" columns="2">
+                            <h:form>
+                                <h:dataTable rendered="#{eventController.countryFilter}" id="filtered_events" value="#{eventController.getFilteredEvents()}" var="event">
+                                    <ui:include src="/event/eventTableContent.xhtml"/>
+                                    <h:column id="goingColumn1">
+                                        <f:facet name="header">Going</f:facet>
+                                        <h:selectBooleanCheckbox id="participateBox#{event.id}" value="#{event.hasParticipant}" >
+                                            <f:ajax event="change" listener="#{eventController.addParticipant(event)}" render="@form" />
+                                        </h:selectBooleanCheckbox>
+                                    </h:column>
+                                </h:dataTable>
+                            </h:form>
+                            <h:form>
+                                <h:dataTable rendered="#{!eventController.countryFilter}" id="unfiltered_events" value="#{eventController.getAllEvents()}" var="event">
+                                    <ui:include src="/event/eventTableContent.xhtml"/>
+                                    <h:column id="goingColumn2">
+                                        <f:facet name="header">Going</f:facet>
+                                        <h:selectBooleanCheckbox id="participateBox#{event.id}" value="#{event.hasParticipant}" >
+                                            <f:ajax event="change" listener="#{eventController.addParticipant(event)}" render="@form" />
+                                        </h:selectBooleanCheckbox>
+                                    </h:column>
+                                </h:dataTable>
+                            </h:form>
+                        </h:panelGrid>
+                    </c:when>
+                    <c:otherwise>
+                        <h:dataTable id="all_events" value="#{eventController.getAllEvents()}" var="event">
+                            <ui:include src="/event/eventTableContent.xhtml"/>
+                        </h:dataTable>
+                    </c:otherwise>
+                </c:choose>
+            </c:when>
+            <c:otherwise>
+                <!-- Content when there are no existing events -->
+                <span>No events yet :( Be the first to create one!</span>
+            </c:otherwise>
+        </c:choose>
+    </ui:define>
+</ui:composition>
+</html>

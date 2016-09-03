@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+<ui:composition template="/layouts/layout.xhtml">
+    <ui:define name="head">
+        <title>Create User</title>
+    </ui:define>
+    <ui:define name="content">
+        <h1>Create User</h1>
+        <h:form>
+            <h:panelGrid columns="2">
+            <h:outputLabel value="Username: " />
+            <h:inputText id="username" value="#{userController.username}" />
+
+            <h:outputLabel value="Password: " />
+            <h:inputSecret id="password" value="#{userController.password}" />
+
+            <h:outputLabel value="Confirm password: " />
+            <h:inputSecret id="confirmPassword" value="#{userController.passwordConfirm}" />
+
+            <h:outputLabel value="First name: " />
+            <h:inputText id="firstName" value="#{userController.firstName}" />
+
+            <h:outputLabel value="Middle name: " />
+            <h:inputText id="middleName" value="#{userController.middleName}" />
+
+            <h:outputLabel value="Last name: " />
+            <h:inputText id="lastName" value="#{userController.lastName}" />
+
+            <h:outputLabel value="Country: " />
+            <h:selectOneMenu id="country" value="#{userController.country}">
+                <f:selectItems value="${countryController.countries}" />
+            </h:selectOneMenu><br />
+
+            </h:panelGrid>
+            <h:commandButton id="createUserBtn" value="Create" type="submit" action="#{userController.createUser()}" />
+        </h:form>
+    </ui:define>
+</ui:composition>
+</html>
